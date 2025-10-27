@@ -1,5 +1,4 @@
 import { expect } from 'chai';
-import 'chai/register-should';
 import {
   createTimeline,
   killAndClearTimeline,

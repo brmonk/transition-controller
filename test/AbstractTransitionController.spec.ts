@@ -1,6 +1,5 @@
 import chai, { expect } from 'chai';
 import sinon from 'sinon';
-import 'chai/register-should';
 import sinonChai from 'sinon-chai';
 import { Animation, TimelineMax } from 'gsap';
 import { render, getComponent, getApp } from './util/index';
