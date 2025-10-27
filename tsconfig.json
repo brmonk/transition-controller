@@ -1,7 +1,9 @@
 {
   "compilerOptions": {
+    "target": "ES2017",
     "allowJs": false,
     "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
     "baseUrl": "./src/",
     "rootDir": "./src/",
     "forceConsistentCasingInFileNames": true,
@@ -15,8 +17,11 @@
     "noUnusedParameters": false,
     "pretty": true,
     "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
     "strictNullChecks": false,
     "sourceMap": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "resolveJsonModule": true,
     "lib": [
       "DOM",
       "DOM.Iterable",
@@ -26,5 +31,10 @@
   "include": [
     "./src/**/*",
     "./types/**/*.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts",
+    "test"
   ]
 }

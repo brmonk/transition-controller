@@ -1,4 +1,4 @@
-import { TimelineMax, Animation } from 'gsap';
+import { TimelineMax } from 'gsap';
 import EventDispatcher from 'seng-event';
 import TransitionEvent from './event/TransitionEvent';
 import { IAbstractTransitionControllerOptions } from './interface/IAbstractTranstitionControllerOptions';
@@ -206,10 +206,8 @@ export default abstract class AbstractTransitionController<T> extends EventDispa
       if (this.transitionInPromise !== null && forceTransition) {
         /* istanbul ignore if */
         if (this.options.debug) {
-          console.warn(`[TransitionController][${
-            this.options.name
-          }] Already transitioning in, so rejecting the original 
-          transitionIn promise to clear any queued animations. We finish the current animation and return a resolved 
+          console.warn(`[TransitionController][${this.options.name}] Already transitioning in, so rejecting the original
+          transitionIn promise to clear any queued animations. We finish the current animation and return a resolved
           promise right away`);
         }
         // TODO: should the forced out wait for the original animation to be completed??
@@ -253,9 +251,7 @@ export default abstract class AbstractTransitionController<T> extends EventDispa
       if (this.transitionInPromise === null) {
         /* istanbul ignore if */
         if (this.options.debug) {
-          console.warn(`[TransitionController][${
-            this.options.name
-          }] Transition in triggered when it's already 
+          console.warn(`[TransitionController][${this.options.name}] Transition in triggered when it's already
           visible, so we will do nothing and return a resolved promise!`);
         }
         return Promise.resolve();
@@ -311,10 +307,8 @@ export default abstract class AbstractTransitionController<T> extends EventDispa
       if (this._transitionOutPromise !== null && forceTransition) {
         /* istanbul ignore if */
         if (this.options.debug) {
-          console.warn(`[TransitionController][${
-            this.options.name
-          }] Already transitioning out, so rejecting the 
-          original transitionOut promise to clear any queued animations. We finish the current animation and return 
+          console.warn(`[TransitionController][${this.options.name}] Already transitioning out, so rejecting the
+          original transitionOut promise to clear any queued animations. We finish the current animation and return
           a resolved promise right away`);
         }
         // TODO: should the forced out wait for the original animation to be completed??
@@ -351,9 +345,7 @@ export default abstract class AbstractTransitionController<T> extends EventDispa
       if (this._transitionOutPromise === null) {
         /* istanbul ignore if */
         if (this.options.debug) {
-          console.warn(`[TransitionController][${
-            this.options.name
-          }] Transition out triggered when it's already hidden, 
+          console.warn(`[TransitionController][${this.options.name}] Transition out triggered when it's already hidden,
           so we will do nothing and return a resolved promise!`);
         }
 
@@ -404,7 +396,7 @@ export default abstract class AbstractTransitionController<T> extends EventDispa
     direction: TransitionDirection = TransitionDirection.IN,
     reset: boolean = false,
     id?: string,
-  ): Animation {
+  ): TimelineMax {
     const componentInstance = this.getComponent(component);
     const timelineInstance = this.getTimelineInstance(componentInstance, direction, reset, id);
 
@@ -476,7 +468,7 @@ export default abstract class AbstractTransitionController<T> extends EventDispa
       // Set the timeline back to paused so it doesn't play
       timeline.paused(true);
     } else if (this.options.debug) {
-      console.warn(`[TransitionController][timeline: ${timeline} id: ${transitionId}] Skipping setup method because 
+      console.warn(`[TransitionController][timeline: ${timeline} id: ${transitionId}] Skipping setup method because
       the timeline already has children!`);
     }
   }
@@ -495,9 +487,9 @@ export default abstract class AbstractTransitionController<T> extends EventDispa
       // Retrieve the component instance
       const componentInstance = this.getComponent(component || (child as ComponentSelector<T>));
       // Get the transition controller so we can reset the timeline.
-      const transitionController = <AbstractTransitionController<T>>componentInstance[
-        this.options.transitionController
-      ];
+      const transitionController = <AbstractTransitionController<T>>(
+        componentInstance[this.options.transitionController]
+      );
 
       // Re-call the reset method for all the children.
       if (transitionController) {
@@ -586,9 +578,9 @@ export default abstract class AbstractTransitionController<T> extends EventDispa
     reset: boolean = false,
     id?: string,
   ): TimelineMax {
-    const transitionController = <AbstractTransitionController<T>>component[
-      this.options.transitionController
-    ];
+    const transitionController = <AbstractTransitionController<T>>(
+      component[this.options.transitionController]
+    );
 
     let timeline;
 
