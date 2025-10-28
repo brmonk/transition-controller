@@ -1,4 +1,4 @@
-import _export from './lib/AbstractTransitionController';
+import { default as AbstractTransitionController } from './lib/AbstractTransitionController';
 
 export { IAbstractTransitionControllerOptions } from './lib/interface/IAbstractTranstitionControllerOptions';
 export { ICreateTimelineOptions } from './lib/interface/ICreateTimelineOptions';
@@ -13,4 +13,4 @@ export {
   createTimeline,
 } from './lib/util/TimelineUtils';
 
-export default _export;
+export default AbstractTransitionController;

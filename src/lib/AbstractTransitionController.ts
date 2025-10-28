@@ -25,9 +25,7 @@ export interface ChildComponentSelector<T> {
  *
  * @param T This param defines the type of the parent controller, this is of course framework specific.
  */
-export default abstract class AbstractTransitionController<T> extends EventDispatcher<
-  TransitionEvent
-> {
+abstract class AbstractTransitionController<T> extends EventDispatcher<TransitionEvent> {
   /**
    * @private
    * @static counter
@@ -727,3 +725,5 @@ export default abstract class AbstractTransitionController<T> extends EventDispa
     super.dispose();
   }
 }
+
+export default AbstractTransitionController;

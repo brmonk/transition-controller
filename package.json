@@ -20,7 +20,7 @@
     "clean:test": "shx rm -rf coverage .nyc_output",
     "clean:npm": "shx rm -rf lib tmp index.js",
     "doc": "npm-run-all -p doc:*",
-    "doc:typedoc": "typedoc src/ --out docs/typedoc --mode file --exclude \"**/index.ts\" --name VueTransitionComponent --excludeExternals --excludePrivate --readme none",
+    "doc:typedoc": "typedoc --options typedoc.json",
     "doc:mkdocs": "mkdocs build --clean --config-file ./docs/general/mkdocs.yml",
     "deploy:mkdocs": "node ./build-tools/script/deploy-docs.js --platform=mkdocs --source=./docs/general/dist",
     "deploy:typedoc": "node ./build-tools/script/deploy-docs.js --platform=typedoc --source=./docs/typedoc",
@@ -109,7 +109,7 @@
     "tslint": "^5.8.0",
     "tslint-config-airbnb": "^5.4.2",
     "tslint-config-prettier": "^1.6.0",
-    "typedoc": "^0.14.2",
+    "typedoc": "^0.23.28",
     "typescript": "^4.9.5",
     "yargs": "12.0.5"
   },

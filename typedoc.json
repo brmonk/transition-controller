@@ -1,0 +1,18 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": ["src/index.ts"],
+  "out": "./docs/typedoc",
+  "name": "transition-controller",
+  "excludeExternals": true,
+  "excludePrivate": true,
+  "readme": "none",
+  "includeVersion": true,
+  "sort": ["source-order"],
+  "treatWarningsAsErrors": false,
+  "validation": {
+    "notExported": false,
+    "invalidLink": true,
+    "notDocumented": false
+  },
+  "kindSortOrder": ["Project", "Module", "Namespace", "Enum", "EnumMember", "Class", "Interface", "TypeAlias", "Constructor", "Property", "Variable", "Function", "Accessor", "Method", "Parameter", "TypeParameter", "TypeLiteral", "CallSignature", "ConstructorSignature", "IndexSignature", "GetSignature", "SetSignature"]
+}
