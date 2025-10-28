@@ -49,31 +49,31 @@ export default class DummyComponentTransitionController extends AbstractVueTrans
         timeline.fromTo(
           button as Element,
           { rotation: 0 },
-          { rotation: 360, ease: Elastic.easeOut, duration: 2, repeat: -1 },
+          { rotation: 360, ease: Elastic.easeOut, duration: 2},
         );
         break;
       case TransitionId.LOOP_2:
         timeline.fromTo(
           button as Element,
           { yPercent: 0 },
-          { yPercent: 100, ease: Elastic.easeInOut, duration: 1, repeat: -1 },
+          { yPercent: 100, ease: Elastic.easeInOut, duration: 1 },
         );
         timeline.fromTo(
           button as Element,
           { yPercent: 100 },
-          { yPercent: 0, ease: Elastic.easeInOut, duration: 1, repeat: -1 },
+          { yPercent: 0, ease: Elastic.easeInOut, duration: 1 },
         );
         break;
       default:
         timeline.fromTo(
           button as Element,
           { xPercent: 0 },
-          { xPercent: 100, ease: Elastic.easeInOut, duration: 1, repeat: -1 },
+          { xPercent: 100, ease: Elastic.easeInOut, duration: 1 },
         );
         timeline.fromTo(
           button as Element,
           { xPercent: 100 },
-          { xPercent: 0, ease: Elastic.easeInOut, duration: 1, repeat: -1 },
+          { xPercent: 0, ease: Elastic.easeInOut, duration: 1 },
         );
         break;
     }
