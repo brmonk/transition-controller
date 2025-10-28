@@ -1,4 +1,4 @@
-import { TimelineMax, Elastic } from 'gsap';
+import { Elastic } from 'gsap';
 import Vue from 'vue';
 import AbstractVueTransitionController from '../AbstractVueTransitionController';
 import TransitionDirection from '../../../../src/lib/enum/TransitionDirection';
@@ -18,21 +18,21 @@ export default class DummyComponentTransitionController extends AbstractVueTrans
   /**
    * @public
    * @method setupTransitionInTimeline
-   * @param {TimelineMax} timeline
+   * @param {gsap.core.Timeline} timeline
    * @param {Vue} parent
    * @param {string} id
    */
-  public setupTransitionInTimeline(timeline: TimelineMax, parent: Vue, id: string ): void {
+  public setupTransitionInTimeline(timeline: gsap.core.Timeline, parent: Vue, id: string): void {
     switch (id) {
       case TransitionId[TransitionDirection.IN].RIGHT_TO_LEFT:
         timeline.fromTo(
           parent.$el,
-          1,
           {
             xPercent: 100,
             autoAlpha: 0,
           },
           {
+            duration: 1,
             xPercent: 0,
             autoAlpha: 1,
             ease: Elastic.easeOut,
@@ -42,12 +42,12 @@ export default class DummyComponentTransitionController extends AbstractVueTrans
       case TransitionId[TransitionDirection.IN].LEFT_TO_RIGHT:
         timeline.fromTo(
           parent.$el,
-          1,
           {
             xPercent: -100,
             autoAlpha: 0,
           },
           {
+            duration: 1,
             xPercent: 0,
             autoAlpha: 1,
             ease: Elastic.easeOut,
@@ -55,7 +55,7 @@ export default class DummyComponentTransitionController extends AbstractVueTrans
         );
         break;
       default:
-        timeline.fromTo(parent.$el, 1, { autoAlpha: 0 }, { autoAlpha: 1 });
+        timeline.fromTo(parent.$el, { autoAlpha: 0 }, { autoAlpha: 1, duration: 1 });
         break;
     }
   }
@@ -63,11 +63,11 @@ export default class DummyComponentTransitionController extends AbstractVueTrans
   /**
    * @public
    * @method setupTransitionOutTimeline
-   * @param { TimelineMax } timeline
+   * @param { gsap.core.Timeline } timeline
    * @param { Vue } parent
    * @param { string } id
    */
-  public setupTransitionOutTimeline(timeline: TimelineMax, parent: Vue, id: string ): void {
+  public setupTransitionOutTimeline(timeline: gsap.core.Timeline, parent: Vue, id: string): void {
     switch (id) {
       case TransitionId[TransitionDirection.OUT].TO_LEFT:
         timeline.to(parent.$el, 1, {
@@ -92,11 +92,14 @@ export default class DummyComponentTransitionController extends AbstractVueTrans
   /**
    * @public
    * @method setupLoopingAnimationTimeline
-   * @param {TimelineMax} timeline
+   * @param {gsap.core.Timeline} timeline
    * @param {Vue} parent
    * @param {string} id
    * @description overwrite this method in the parent class
    * */
-  public setupLoopingAnimationTimeline(timeline: TimelineMax, parent: Vue,  id: string): void {
-  }
+  public setupLoopingAnimationTimeline(
+    timeline: gsap.core.Timeline,
+    parent: Vue,
+    id: string,
+  ): void {}
 }

@@ -1,4 +1,4 @@
-import { Elastic, TimelineMax } from 'gsap';
+import { Elastic } from 'gsap';
 import Vue from 'vue';
 import AbstractVueTransitionController from '../AbstractVueTransitionController';
 import TransitionDirection from '../../../../src/lib/enum/TransitionDirection';
@@ -18,20 +18,20 @@ export default class RandomDummyComponentTransitionController extends AbstractVu
   /**
    * @public
    * @method setupTransitionInTimeline
-   * @param {TimelineMax} timeline
+   * @param {gsap.core.Timeline} timeline
    * @param {Vue} parent
    * @param {string} id
    */
-  public setupTransitionInTimeline(timeline: TimelineMax, parent: Vue, id: string): void {
+  public setupTransitionInTimeline(timeline: gsap.core.Timeline, parent: Vue, id: string): void {
     timeline.fromTo(
       parent.$el,
-      1,
       {
         x: window.innerWidth * 0.25 * Math.random(),
         autoAlpha: 1,
         scale: 1,
       },
       {
+        duration: 1,
         x: 0,
         autoAlpha: 1,
         scale: 1,
@@ -44,12 +44,13 @@ export default class RandomDummyComponentTransitionController extends AbstractVu
   /**
    * @public
    * @method setupTransitionOutTimeline
-   * @param { TimelineMax } timeline
+   * @param { gsap.core.Timeline } timeline
    * @param { Vue } parent
    * @param { string } id
    */
-  public setupTransitionOutTimeline(timeline: TimelineMax, parent: Vue, id: string): void {
-    timeline.to(parent.$el, 1, {
+  public setupTransitionOutTimeline(timeline: gsap.core.Timeline, parent: Vue, id: string): void {
+    timeline.to(parent.$el, {
+      duration: 1,
       autoAlpha: 0,
       scale: 2,
     });
@@ -59,10 +60,10 @@ export default class RandomDummyComponentTransitionController extends AbstractVu
   /**
    * @public
    * @method setupLoopingAnimationTimeline
-   * @param {TimelineMax} timeline
+   * @param {gsap.core.Timeline} timeline
    * @param {Vue} parent
    * @param {string} id
    * @description overwrite this method in the parent class
    * */
-  public setupLoopingAnimationTimeline(timeline: TimelineMax, parent: Vue, id: string): void {}
+  public setupLoopingAnimationTimeline(timeline: gsap.core.Timeline, parent: Vue, id: string): void {}
 }

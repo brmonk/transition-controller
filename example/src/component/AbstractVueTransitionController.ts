@@ -16,10 +16,10 @@ export default abstract class AbstractVueTransitionController extends AbstractTr
     let instance: Vue;
 
     if (isElement(component)) {
-      instance = this.parentController.$children.find(child => child.$el === component);
+      instance = this.parentController.$children.find(child => child.$el === component)!;
     } else if (isString(component)) {
       const key = Object.keys(this.parentController.$refs).find(key => key === component);
-      instance = <Vue>this.parentController.$refs[key];
+      instance = <Vue>this.parentController.$refs[key!];
     } else {
       instance = <Vue>component;
     }
