@@ -11,6 +11,32 @@ module.exports = {
   },
   extends: ['airbnb-base', 'prettier'],
   plugins: ['import', 'prettier'],
+  overrides: [
+    {
+      files: ['*.ts'],
+      parser: '@typescript-eslint/parser',
+      plugins: ['@typescript-eslint'],
+      extends: ['airbnb-base', '@typescript-eslint/recommended', 'prettier'],
+      parserOptions: {
+        ecmaVersion: 2020,
+        sourceType: 'module',
+        project: './tsconfig.json',
+      },
+      rules: {
+        // TypeScript specific rule adjustments
+        '@typescript-eslint/no-unused-vars': ['error'],
+        'no-unused-vars': 'off',
+        'import/extensions': [
+          'error',
+          'ignorePackages',
+          {
+            js: 'never',
+            ts: 'never',
+          },
+        ],
+      },
+    },
+  ],
   rules: {
     'import/extensions': [
       'error',
@@ -31,6 +57,6 @@ module.exports = {
     'no-underscore-dangle': 0,
     // to correctly work on windows with some tools that create windows line-endings
     // this will be correct by git when committed
-    'linebreak-style': 0
+    'linebreak-style': 0,
   },
 };

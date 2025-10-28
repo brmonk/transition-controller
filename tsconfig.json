@@ -20,7 +20,6 @@
     "skipDefaultLibCheck": true,
     "strictNullChecks": false,
     "sourceMap": true,
-    "suppressImplicitAnyIndexErrors": true,
     "resolveJsonModule": true,
     "lib": [
       "DOM",

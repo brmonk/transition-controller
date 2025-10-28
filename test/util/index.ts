@@ -32,10 +32,10 @@ const componentList = [
 ];
 
 let nodeTemplate = <HTMLElement>getDocument().querySelector('#app');
-export let appNode;
+export let appNode: HTMLElement;
 
 export const render = function () {
-  appNode = nodeTemplate.cloneNode(true);
+  appNode = nodeTemplate.cloneNode(true) as HTMLElement;
   cleanElement(appNode);
 
   componentList.forEach(function (blockConstructor) {
@@ -46,7 +46,7 @@ export const render = function () {
 };
 
 export const getComponent = function (displayName: string) {
-  const componentElement = <HTMLElement>appNode.querySelector(`[data-component="${displayName}"]`);
+  const componentElement = appNode.querySelector(`[data-component="${displayName}"]`) as HTMLElement;
   return getComponentForElement(componentElement);
 };
 

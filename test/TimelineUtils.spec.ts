@@ -5,18 +5,18 @@ import {
   clearTimeline,
   cloneTimeline,
 } from '../src/lib/util/TimelineUtils';
-import { TimelineMax } from 'gsap';
+import { gsap } from 'gsap';
 import TransitionDirection from '../src/lib/enum/TransitionDirection';
 
 describe('TimelineUtils.spec', () => {
   const demoDuration = 0.01;
   const demoTimeOut = demoDuration * 3000;
 
-  let onStart;
-  let onComplete;
-  let onReverseStart;
-  let onReverseComplete;
-  let timeline;
+  let onStart: boolean;
+  let onComplete: boolean;
+  let onReverseStart: boolean;
+  let onReverseComplete: boolean;
+  let timeline: gsap.core.Timeline;
 
   const options = {
     onStart: () => {
@@ -34,7 +34,6 @@ describe('TimelineUtils.spec', () => {
   };
 
   describe('createTimeline', () => {
-
     beforeEach(() => {
       onStart = false;
       onComplete = false;
@@ -42,11 +41,11 @@ describe('TimelineUtils.spec', () => {
       onReverseComplete = false;
 
       timeline = createTimeline(options);
-      timeline.to({ test: 0 }, demoDuration, { test: 10 });
+      timeline.to({ test: 0 }, { test: 10, duration: demoDuration });
     });
 
     it('should return a TimelineMax', () => {
-      expect(timeline).to.be.instanceOf(TimelineMax);
+      expect(timeline).to.be.instanceOf(gsap.core.Timeline);
     });
 
     it('should give onStart/onComplete callback', done => {
@@ -67,7 +66,7 @@ describe('TimelineUtils.spec', () => {
           expect(onReverseComplete).to.be.true;
           done();
         }, demoTimeOut);
-      }, demoTimeOut)
+      }, demoTimeOut);
     });
   });
 
@@ -92,25 +91,26 @@ describe('TimelineUtils.spec', () => {
     it('should clone the timeline', () => {
       timeline.add(
         cloneTimeline(
-          timeline.add(cloneTimeline(timeline, TransitionDirection.IN)) as TimelineMax,
+          timeline.add(cloneTimeline(timeline, TransitionDirection.IN)) as gsap.core.Timeline,
           TransitionDirection.IN,
         ),
       );
-      expect(cloneTimeline(timeline, TransitionDirection.IN)).to.be.instanceOf(TimelineMax);
+      expect(cloneTimeline(timeline, TransitionDirection.IN)).to.be.instanceOf(gsap.core.Timeline);
     });
 
     it('should clone the timeline with a to animation', () => {
       timeline.to({ test: 0 }, demoDuration, { test: 10 });
-      expect(cloneTimeline(timeline, TransitionDirection.IN)).to.be.instanceOf(TimelineMax);
+      expect(cloneTimeline(timeline, TransitionDirection.IN)).to.be.instanceOf(gsap.core.Timeline);
     });
 
     it('should try to clone the timeline but fail due to using fromTo in a nested transitionOut timeline', () => {
-      timeline.fromTo({ test: 0 }, demoDuration, { test: 0 }, { test: 10 });
+      timeline.fromTo({ test: 0 }, { test: 0 }, { test: 10, duration: demoDuration });
       expect(() => cloneTimeline(timeline, TransitionDirection.OUT)).to.throw();
     });
 
     it('should try to clone the timeline but fail due to using from in a nested transitionIn timeline', () => {
-      timeline.from({ test: 0 }, demoDuration, { test: 0 }, { test: 10 });
+      // @ts-expect-error
+      timeline.from({ test: 0 }, { test: 0, duration: demoDuration }, { test: 10 });
       expect(() => cloneTimeline(timeline, TransitionDirection.IN)).to.throw();
     });
   });

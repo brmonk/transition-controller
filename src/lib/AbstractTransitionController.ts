@@ -1,4 +1,4 @@
-import { TimelineMax } from 'gsap';
+import { gsap } from 'gsap';
 import EventDispatcher from 'seng-event';
 import TransitionEvent from './event/TransitionEvent';
 import { IAbstractTransitionControllerOptions } from './interface/IAbstractTranstitionControllerOptions';
@@ -68,7 +68,7 @@ export default abstract class AbstractTransitionController<T> extends EventDispa
    *
    * @public
    */
-  public transitionInTimeline: TimelineMax;
+  public transitionInTimeline: gsap.core.Timeline;
 
   /**
    * The transitionOutTimeline property is the timeline that is used for the out
@@ -76,7 +76,7 @@ export default abstract class AbstractTransitionController<T> extends EventDispa
    *
    * @public
    */
-  public transitionOutTimeline: TimelineMax;
+  public transitionOutTimeline: gsap.core.Timeline;
 
   /**
    * The loopingAnimationTimeline property is the timeline that is used for the looping
@@ -84,7 +84,7 @@ export default abstract class AbstractTransitionController<T> extends EventDispa
    *
    * @public
    */
-  public loopingAnimationTimeline: TimelineMax;
+  public loopingAnimationTimeline: gsap.core.Timeline;
 
   /**
    * The resolve method used for resolving the transition in promise.
@@ -240,7 +240,6 @@ export default abstract class AbstractTransitionController<T> extends EventDispa
           } else {
             // Remove the paused state from transitionIn Timeline
             this.transitionInTimeline.paused(false);
-
             this.transitionInResolveMethod = resolve;
             this.transitionInRejectMethod = resolve;
             this.transitionInTimeline.restart();
@@ -389,14 +388,14 @@ export default abstract class AbstractTransitionController<T> extends EventDispa
    * @param {TransitionDirection} direction The direction of the timeline that you want
    * @param {boolean} reset This flag determines if we reset the existing timeline or re-create it from scratch
    * @param {boolean} id This is the id of the timeline that we are requesting
-   * @returns { Animation } The timeline that is retrieved
+   * @returns { gsap.core.Timeline } The timeline that is retrieved
    */
   public getTimeline(
     component: ComponentSelector<T>,
     direction: TransitionDirection = TransitionDirection.IN,
     reset: boolean = false,
     id?: string,
-  ): TimelineMax {
+  ): gsap.core.Timeline {
     const componentInstance = this.getComponent(component);
     const timelineInstance = this.getTimelineInstance(componentInstance, direction, reset, id);
 
@@ -424,14 +423,14 @@ export default abstract class AbstractTransitionController<T> extends EventDispa
    * Setup timeline is a wrapper method that calls the correct setup methods and clears any old timelines if necessary
    *
    * @public
-   * @param {Timeline} type This is the type of timeline that will be initialized.
+   * @param {TimelineType} type This is the type of timeline that will be initialized.
    * @param {boolean} reset This means the timeline will be cleared before initializing
    * @param {string} id This is the id of the timeline that should be initialized.
    */
   public setupTimeline(type: TimelineType, reset: boolean = true, id?: string) {
-    let timeline;
-    let transitionId;
-    let setupMethod;
+    let timeline: gsap.core.Timeline;
+    let transitionId: string;
+    let setupMethod: typeof this.setupTimeline;
 
     switch (type) {
       case TimelineType.IN:
@@ -456,14 +455,14 @@ export default abstract class AbstractTransitionController<T> extends EventDispa
     if (reset || id !== transitionId) {
       // We need to set it to playing because otherwise the intial states will not be applied when resetting
       timeline.paused(false);
-
       clearTimeline(timeline);
     }
 
     /* istanbul ignore else */
-    if (timeline.getChildren() <= 0) {
+    if (timeline.getChildren && timeline.getChildren().length <= 0) {
       // Make sure the timeline is not paused otherwise the styles will not be applied.
       timeline.paused(false);
+      // @ts-expect-error
       setupMethod(timeline, this.parentController, transitionId);
       // Set the timeline back to paused so it doesn't play
       timeline.paused(true);
@@ -515,34 +514,42 @@ export default abstract class AbstractTransitionController<T> extends EventDispa
    * the animations that are required for the transition out to done.
    *
    * @protected
-   * @param {TimelineMax} timeline The reference to the transition out timeline
+   * @param {gsap.core.Timeline} timeline The reference to the transition out timeline
    * @param {T} parent The reference to the parent instance
    * @param {string} id The id of the transition out timeline that should be initialized
    * @param {boolean} reset When this flag is set to true the old timeline will be cleared before calling the method
    */
-  protected abstract setupTransitionOutTimeline(timeline: TimelineMax, parent: T, id: string): void;
+  protected abstract setupTransitionOutTimeline(
+    timeline: gsap.core.Timeline,
+    parent: T,
+    id: string,
+  ): void;
 
   /**
    * This method is actually set's up the transition in timeline. it should contain all
    * the animations that are required for the transition in to done.
    *
    * @protected
-   * @param {TimelineMax} timeline The reference to the transition in timeline
+   * @param {gsap.core.Timeline} timeline The reference to the transition in timeline
    * @param {T} parent The reference to the parent instance
    * @param {string} id The id of the transition in timeline that should be initialized
    */
-  protected abstract setupTransitionInTimeline(timeline: TimelineMax, parent: T, id: string): void;
+  protected abstract setupTransitionInTimeline(
+    timeline: gsap.core.Timeline,
+    parent: T,
+    id: string,
+  ): void;
   /**
    * This method is actually set's up the looping timeline. it should contain all
    * the animations that are required for looping.
    *
    * @protected
-   * @param {TimelineMax} timeline The reference to the looping timeline
+   * @param {gsap.core.Timeline} timeline The reference to the looping timeline
    * @param {T} parent The reference to the parent instance
    * @param {string} id The id of the looping animation that should be initialized
    */
   protected abstract setupLoopingAnimationTimeline(
-    timeline: TimelineMax,
+    timeline: gsap.core.Timeline,
     parent: T,
     id: string,
   ): void;
@@ -570,19 +577,19 @@ export default abstract class AbstractTransitionController<T> extends EventDispa
    * @param {TransitionDirection} direction This is the direction of the timeline.
    * @param {boolean} reset This flag determines if we reset the existing timeline or re-create it from scratch
    * @param {boolean} id This is the id of the timeline that we are requesting
-   * @returns {TimelineMax} This is the timeline instance that you requested
+   * @returns {gsap.core.Timeline} This is the timeline instance that you requested
    */
   private getTimelineInstance(
     component: T,
     direction: TransitionDirection = TransitionDirection.IN,
     reset: boolean = false,
     id?: string,
-  ): TimelineMax {
+  ): gsap.core.Timeline {
     const transitionController = <AbstractTransitionController<T>>(
       component[this.options.transitionController]
     );
 
-    let timeline;
+    let timeline: gsap.core.Timeline;
 
     if (direction === TransitionDirection.OUT) {
       transitionController.setupTimeline(TimelineType.OUT, reset, id);
@@ -610,7 +617,7 @@ export default abstract class AbstractTransitionController<T> extends EventDispa
       onStart: () => this.handleTransitionStart(TransitionDirection.OUT),
       onComplete: () => this.handleTransitionComplete(TransitionDirection.OUT),
     });
-    this.loopingAnimationTimeline = new TimelineMax({
+    this.loopingAnimationTimeline = gsap.timeline({
       repeat: -1,
     });
   }
