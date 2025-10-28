@@ -139,25 +139,27 @@
         <pre class="typescript">import { Vue } from 'vue/types/vue';
 import isElement from 'lodash/isElement';
 import isString from 'lodash/isString';
-import { AbstractTransitionController, TransitionDirection } from 'transition-controller';
+import AbstractTransitionController from '../../../src/lib/AbstractTransitionController';
 
-export default abstract class AbstractVueTransitionController extends AbstractTransitionController&#60;Vue&#62; {
+export default abstract class AbstractVueTransitionController extends AbstractTransitionController<Vue> {
+
   /**
    * @protected
    * @method getComponent
+   * @description The method that finds the component based on a string, html element or instance
    * @param {string | HTMLElement | Vue} component
    * @returns {Vue}
    */
-  protected getComponent(component: string | HTMLElement | Vue): Vue {
+  protected getComponent( component: string | HTMLElement | Vue):Vue {
     let instance: Vue;
 
     if (isElement(component)) {
-      instance = this.parentController.$children.find(child => child.$el === component);
+      instance = this.parentController.$children.find(child => child.$el === component)!;
     } else if (isString(component)) {
       const key = Object.keys(this.parentController.$refs).find(key => key === component);
-      instance = this.parentController.$refs[key];
+      instance = <Vue>this.parentController.$refs[key!];
     } else {
-      instance = component;
+      instance = <Vue>component;
     }
 
     if (instance === undefined) {
@@ -172,9 +174,10 @@ export default abstract class AbstractVueTransitionController extends AbstractTr
     <div :class="['tab-pane', 'fade', 'in', {'active': activeTab === 3}]">
       <h4>dummy-component/DummyComponentTransitionController.ts</h4>
       <p>The example uses multiple timelines per component, this is not something that is required. If no transitionIn/transitionOutId is provided the id argument can be ignored!</p>
-      <pre class="typescript">import { TimelineLite, TimelineMax, Elastic } from 'gsap';
+      <pre class="typescript">import { Elastic } from 'gsap';
+import Vue from 'vue';
 import AbstractVueTransitionController from '../AbstractVueTransitionController';
-import { TransitionDirection } from 'transition-controller';
+import TransitionDirection from '../../../../src/lib/enum/TransitionDirection';
 
 export const TransitionId = {
   [TransitionDirection.IN]: {
@@ -188,24 +191,24 @@ export const TransitionId = {
 };
 
 export default class DummyComponentTransitionController extends AbstractVueTransitionController {
-/**
+  /**
    * @public
    * @method setupTransitionInTimeline
-   * @param {TimelineLite | TimelineMax} timeline
+   * @param {gsap.core.Timeline} timeline
    * @param {Vue} parent
    * @param {string} id
    */
-  public setupTransitionInTimeline(timeline: TimelineLite | TimelineMax, parent: Vue, id: string ): void {
+  public setupTransitionInTimeline(timeline: gsap.core.Timeline, parent: Vue, id: string): void {
     switch (id) {
       case TransitionId[TransitionDirection.IN].RIGHT_TO_LEFT:
         timeline.fromTo(
           parent.$el,
-          1,
           {
             xPercent: 100,
             autoAlpha: 0,
           },
           {
+            duration: 1,
             xPercent: 0,
             autoAlpha: 1,
             ease: Elastic.easeOut,
@@ -215,12 +218,12 @@ export default class DummyComponentTransitionController extends AbstractVueTrans
       case TransitionId[TransitionDirection.IN].LEFT_TO_RIGHT:
         timeline.fromTo(
           parent.$el,
-          1,
           {
             xPercent: -100,
             autoAlpha: 0,
           },
           {
+            duration: 1,
             xPercent: 0,
             autoAlpha: 1,
             ease: Elastic.easeOut,
@@ -228,7 +231,7 @@ export default class DummyComponentTransitionController extends AbstractVueTrans
         );
         break;
       default:
-        timeline.fromTo(parent.$el, 1, { autoAlpha: 0 }, { autoAlpha: 1 });
+        timeline.fromTo(parent.$el, { autoAlpha: 0 }, { autoAlpha: 1, duration: 1 });
         break;
     }
   }
@@ -236,11 +239,11 @@ export default class DummyComponentTransitionController extends AbstractVueTrans
   /**
    * @public
    * @method setupTransitionOutTimeline
-   * @param { TimelineMax } timeline
+   * @param { gsap.core.Timeline } timeline
    * @param { Vue } parent
    * @param { string } id
    */
-  public setupTransitionOutTimeline(timeline: TimelineLite | TimelineMax, parent: Vue, id: string ): void {
+  public setupTransitionOutTimeline(timeline: gsap.core.Timeline, parent: Vue, id: string): void {
     switch (id) {
       case TransitionId[TransitionDirection.OUT].TO_LEFT:
         timeline.to(parent.$el, 1, {
@@ -265,23 +268,28 @@ export default class DummyComponentTransitionController extends AbstractVueTrans
   /**
    * @public
    * @method setupLoopingAnimationTimeline
-   * @param {TimelineMax} timeline
+   * @param {gsap.core.Timeline} timeline
    * @param {Vue} parent
    * @param {string} id
    * @description overwrite this method in the parent class
    * */
-  public setupLoopingAnimationTimeline(timeline: TimelineLite | TimelineMax, parent: Vue,  id: string): void {}
+  public setupLoopingAnimationTimeline(
+    timeline: gsap.core.Timeline,
+    parent: Vue,
+    id: string,
+  ): void {}
 }
 </pre>
 
       <h4>dummy-component/index.js</h4>
-      <pre class="jsx">import DummyComponentTransitionController from './DummyComponentTransitionController';
+      <pre class="jsx">import DummyComponentTransitionController, {TransitionId} from './DummyComponentTransitionController';
+import TransitionDirection from '../../../../src/lib/enum/TransitionDirection';
 
 export default {
   name: 'DummyComponent',
-  template: `&#60;div class="panel panel-info"&#62;
+  template: `&#60;div class="panel panel-info" data-name="dummyComponent"&#62;
                 &#60;div class="panel-heading"&#62;
-                  &#60;h3 class="panel-title">DummyComponent&#60;/h3&#62;
+                  &#60;h3 class="panel-title"&#62;DummyComponent&#60;/h3&#62;
                 &#60;/div&#62;
                 &#60;div class="panel-body"&#62;
                   Hi i'm a dummy component
@@ -289,9 +297,7 @@ export default {
               &#60;/div&#62;`,
   mounted() {
     this.transitionController = new DummyComponentTransitionController(this, {
-      debug: true,
       name: 'DummyComponent',
-      useTweenMax: false,
       transitionInId: TransitionId[TransitionDirection.IN].LEFT_TO_RIGHT,
       transitionOutId: TransitionId[TransitionDirection.OUT].TO_RIGHT,
     });
@@ -320,9 +326,10 @@ new Vue({
     <div :class="['tab-pane', 'fade', 'in', {'active': activeTab === 4}]">
       <h3>Looping animation Example</h3>
       <h4>loop-component/LoopComponentTransitionController.ts</h4>
-      <pre class="typescript">import { TimelineLite, TimelineMax, Elastic } from 'gsap';
+      <pre class="typescript">import { Elastic } from 'gsap';
 import Vue from 'vue';
 import AbstractVueTransitionController from '../AbstractVueTransitionController';
+import TransitionDirection from '../../../../src/lib/enum/TransitionDirection';
 
 export const TransitionId = {
   [TransitionDirection.IN]: {},
@@ -335,43 +342,67 @@ export default class DummyComponentTransitionController extends AbstractVueTrans
   /**
    * @public
    * @method setupTransitionInTimeline
-   * @param {TimelineLite | TimelineMax} timeline
+   * @param {gsap.core.Timeline} timeline
    * @param {Vue} parent
    * @param {string} id
    */
-  public setupTransitionInTimeline(timeline: TimelineLite | TimelineMax, parent: Vue, id: string ): void {}
+  public setupTransitionInTimeline(timeline: gsap.core.Timeline, parent: Vue, id: string): void {}
 
   /**
    * @public
    * @method setupTransitionOutTimeline
-   * @param { TimelineMax } timeline
+   * @param { gsap.core.Timeline } timeline
    * @param { Vue } parent
    * @param { string } id
    */
-  public setupTransitionOutTimeline(timeline: TimelineLite | TimelineMax, parent: Vue, id: string ): void {}
+  public setupTransitionOutTimeline(timeline: gsap.core.Timeline, parent: Vue, id: string): void {}
 
   /**
    * @public
    * @method setupLoopingAnimationTimeline
-   * @param {TimelineMax} timeline
+   * @param {gsap.core.Timeline} timeline
    * @param {Vue} parent
    * @param {string} id
    * @description overwrite this method in the parent class
    * */
-  public setupLoopingAnimationTimeline(timeline: TimelineLite | TimelineMax, parent: Vue,  id: string): void {
+  public setupLoopingAnimationTimeline(
+    timeline: gsap.core.Timeline,
+    parent: Vue,
+    id: string,
+  ): void {
     const { button } = parent.$refs;
 
     switch (id) {
       case TransitionId.LOOP_1:
-        timeline.fromTo(button, 2, {rotation: 0}, {rotation: 360, ease: Elastic.easeOut});
+        timeline.fromTo(
+          button as Element,
+          { rotation: 0 },
+          { rotation: 360, ease: Elastic.easeOut, duration: 2},
+        );
         break;
       case TransitionId.LOOP_2:
-        timeline.fromTo(button, 1, {yPercent: 0}, {yPercent: 100, ease: Elastic.easeInOut});
-        timeline.fromTo(button, 1, {yPercent: 100}, {yPercent: 0, ease: Elastic.easeInOut});
+        timeline.fromTo(
+          button as Element,
+          { yPercent: 0 },
+          { yPercent: 100, ease: Elastic.easeInOut, duration: 1 },
+        );
+        timeline.fromTo(
+          button as Element,
+          { yPercent: 100 },
+          { yPercent: 0, ease: Elastic.easeInOut, duration: 1 },
+        );
         break;
       default:
-        timeline.fromTo(button, 1, {xPercent: 0}, {xPercent: 100, ease: Elastic.easeInOut});
-        timeline.fromTo(button, 1, {xPercent: 100}, {xPercent: 0, ease: Elastic.easeInOut});
+        timeline.fromTo(
+          button as Element,
+          { xPercent: 0 },
+          { xPercent: 100, ease: Elastic.easeInOut, duration: 1 },
+        );
+        timeline.fromTo(
+          button as Element,
+          { xPercent: 100 },
+          { xPercent: 0, ease: Elastic.easeInOut, duration: 1 },
+        );
         break;
     }
   }
