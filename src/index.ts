@@ -1,8 +1,6 @@
 import _export from './lib/AbstractTransitionController';
 
-export {
-  IAbstractTransitionControllerOptions,
-} from './lib/interface/IAbstractTranstitionControllerOptions';
+export { IAbstractTransitionControllerOptions } from './lib/interface/IAbstractTranstitionControllerOptions';
 export { ICreateTimelineOptions } from './lib/interface/ICreateTimelineOptions';
 
 export { default as TimelineType } from './lib/enum/TimelineType';
