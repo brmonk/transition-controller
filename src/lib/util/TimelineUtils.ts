@@ -1,7 +1,9 @@
-import { gsap } from 'gsap';
+import { gsap, CSSPlugin } from 'gsap';
 import { ICreateTimelineOptions } from '../interface/ICreateTimelineOptions';
 import TransitionDirection from '../enum/TransitionDirection';
 import isFunction from 'lodash/isFunction';
+
+gsap.registerPlugin(CSSPlugin);
 
 /**
  * The create timeline method creates a gsap timeline
@@ -69,9 +71,9 @@ export function killAndClearTimeline(timeline: gsap.core.Timeline): void {
 export function clearTimeline(timeline: gsap.core.Timeline): void {
   // debugger;
   timeline.getChildren().forEach((target: gsap.core.Timeline | gsap.core.Tween) => {
-    if (target.targets) {
+    if ('targets' in target && target.targets().length > 0) {
       // Note: When resetting a timeline clearing just the css properties does not clear the properties like autoAlpha or scale
-      gsap.set(target.targets, { clearProps: true });
+      gsap.set(target.targets(), { clearProps: 'all' });
     } else {
       clearTimeline(<gsap.core.Timeline>target);
     }
@@ -110,13 +112,17 @@ export function cloneTimeline(
       // Add the timeline to the parent timeline
       timeline.add(subTimeline.restart(), child._startTime);
     } else {
+      const targets = child.targets();
+
       if (child.vars.startAt) {
         if (direction === TransitionDirection.OUT) {
           throw new Error('Do not use fromTo when nesting transitionOutTimelines, use to instead!');
         }
-        const from = JSON.parse(JSON.stringify(child.vars.startAt));
-        const to = { ...child.vars, duration: child.duration() };
-        timeline.fromTo(child.targets, from, to, child.startTime());
+        if (targets.length > 0) {
+          const from = JSON.parse(JSON.stringify(child.vars.startAt));
+          const to = { ...child.vars, duration: child.duration() };
+          timeline.fromTo(targets, from, to, child.startTime());
+        }
       } else {
         if (child.vars.runBackwards) {
           // When nesting timelines and the user defines a root timeline with a from the clone will
@@ -125,9 +131,9 @@ export function cloneTimeline(
           throw new Error(
             'Do not use from while nesting transitionInTimelines, use fromTo instead!',
           );
-        } else {
+        } else if (targets.length > 0) {
           const vars = { ...child.vars, duration: child.duration() };
-          timeline.to(child.targets, vars, child.startTime());
+          timeline.to(targets, vars, child.startTime());
         }
       }
     }
