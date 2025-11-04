@@ -5,6 +5,9 @@
   "author": "frontend.monks",
   "homepage": "http://www.github.com/larsvanbraam/transition-controller",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "keywords": [
     "seng",
     "mediamonks",
