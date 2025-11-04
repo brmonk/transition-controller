@@ -2,7 +2,7 @@
 [![npm](https://img.shields.io/npm/dm/transition-controller.svg?maxAge=2592000)](https://www.npmjs.com/package/transition-controller)
 [![GitHub issues](https://img.shields.io/github/issues/larsvanbraam/transition-controller.svg?style=flat-square)](https://github.com/larsvanbraam/transition-controller/issues)
 
-# AbstractTransitionController
+# @mediamonks/transition-controller
 An abstract transition controller that can be used for transitioning elements
 
 ## Installation

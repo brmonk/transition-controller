@@ -1,9 +1,28 @@
 {
-  "name": "transition-controller",
-  "version": "3.0.0",
+  "name": "@mediamonks/transition-controller",
   "description": "An abstract transition controller that can be used for transitioning elements",
+  "version": "3.0.0",
+  "author": "frontend.monks",
+  "homepage": "http://www.github.com/larsvanbraam/transition-controller",
+  "license": "MIT",
+  "keywords": [
+    "seng",
+    "mediamonks",
+    "transition",
+    "gsap"
+  ],
   "main": "./index.js",
   "types": "./index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/larsvanbraam/transition-controller.git"
+  },
+  "bugs": {
+    "url": "https://github.com/larsvanbraam/transition-controller/issues"
+  },
+  "pre-push": [
+    "validate"
+  ],
   "scripts": {
     "prepublishOnly": "npm-run-all -s validate build",
     "validate": "npm-run-all -p lint test",
@@ -45,25 +64,6 @@
         "npm run lint:ts"
       ]
     }
-  },
-  "pre-push": [
-    "validate"
-  ],
-  "author": "Lars van Braam <larsvanbraam@gmail.com> (larsvanbraam)",
-  "homepage": "http://www.github.com/larsvanbraam/transition-controller",
-  "license": "MIT",
-  "keywords": [
-    "seng",
-    "mediamonks",
-    "transition",
-    "gsap"
-  ],
-  "bugs": {
-    "url": "https://github.com/larsvanbraam/transition-controller/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/larsvanbraam/transition-controller.git"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.3",
